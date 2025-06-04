@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+</head>
+<body>
+  <h2>Top participants</h2>
+  <div id="leaderboard"></div>
+
+  <script>
+    const csvUrl = 'http://localhost:8080/https://drive.google.com/uc?export=download&id=1I3nFx31H_3IlhvP1zQk51_O-4JHiyIXO';
+    
+    fetch(csvUrl)
+      .then(res => res.text())
+      .then(csv => {
+        const results = Papa.parse(csv, {
+          header: true,
+          skipEmptyLines: true
+        }).data;
+
+        const sorted = results
+          .sort((a, b) => parseInt(b.points) - parseInt(a.points))
+          .slice(0, 20);
+
+        const container = document.getElementById('leaderboard');
+        sorted.forEach((entry, index) => {
+          const el = document.createElement('div');
+          el.textContent = `${index + 1}. ${entry.viewer} (${entry.points})`;
+          container.appendChild(el);
+        });
+      });
+  </script>
+</body>
+</html>
+
